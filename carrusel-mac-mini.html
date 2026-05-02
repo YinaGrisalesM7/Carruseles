@@ -6,7 +6,7 @@
   <title>Carrusel Mac Mini</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
@@ -26,22 +26,16 @@
 
     .header {
       font-size: 11px;
-      font-weight: 400;
       color: #2a2a2a;
       letter-spacing: 0.18em;
       text-transform: uppercase;
     }
 
-    /* ── NAV ROW ── */
-    .nav-row {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+    /* ── NAVIGATION ── */
+    .nav-row { display: flex; align-items: center; gap: 20px; }
 
     .nav-btn {
-      width: 46px;
-      height: 46px;
+      width: 46px; height: 46px;
       border-radius: 50%;
       border: 1.5px solid #222;
       background: transparent;
@@ -54,23 +48,19 @@
       transition: all 0.2s;
       flex-shrink: 0;
     }
-    .nav-btn:hover:not(:disabled) {
-      background: #F2C230;
-      border-color: #F2C230;
-      color: #0F0F0F;
-    }
+    .nav-btn:hover:not(:disabled) { background: #F2C230; border-color: #F2C230; color: #0F0F0F; }
     .nav-btn:disabled { opacity: 0.18; cursor: default; }
 
-    /* ── SLIDE CLIP: visible at 540x540 ── */
+    /* ── SLIDE CLIP: 540×540 preview ── */
     .slide-clip {
       width: 540px;
       height: 540px;
       overflow: hidden;
       position: relative;
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
     }
 
-    /* ── SCALE WRAPPER: 1080→540 ── */
+    /* ── SCALE 1080→540 ── */
     .slide-scale {
       position: absolute;
       width: 1080px;
@@ -81,23 +71,115 @@
 
     /* ── SLIDE BASE ── */
     .slide {
-      position: absolute;
-      top: 0; left: 0;
-      width: 1080px;
-      height: 1080px;
-      background: #0F0F0F;
-      display: flex;
-      flex-direction: column;
+      position: absolute; top: 0; left: 0;
+      width: 1080px; height: 1080px;
+      overflow: hidden;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.28s ease;
     }
-    .slide.active {
-      opacity: 1;
-      pointer-events: auto;
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    /* ── DARK THEME ── */
+    .dark { background: #0F0F0F; }
+    .dark .counter   { color: #282828; }
+    .dark .counter b { color: #F2C230; }
+    .dark h1         { color: #FFFFFF; }
+    .dark .body      { color: #606060; }
+    .dark .brand     { color: #1c1c1c; }
+    .dark .bar       { background: #F2C230; }
+
+    /* ── LIGHT THEME ── */
+    .light { background: #F7F4ED; }
+    .light .counter   { color: #C8C2B4; }
+    .light .counter b { color: #C89800; }
+    .light h1         { color: #111111; }
+    .light .body      { color: #808080; }
+    .light .brand     { color: #C8C2B4; }
+    .light .bar       { background: #F2C230; }
+
+    /* ── TYPOGRAPHY ── */
+    h1 {
+      font-family: 'Archivo Black', sans-serif;
+      font-weight: 400;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+    }
+    .counter {
+      font-family: 'Inter', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+    }
+    .bar { width: 52px; height: 5px; border-radius: 2px; }
+    .body {
+      font-family: 'Inter', sans-serif;
+      font-size: 33px;
+      font-weight: 400;
+      line-height: 1.65;
+    }
+    .brand {
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: 0.07em;
     }
 
-    /* ── SLIDE INNER LAYOUT ── */
+    /* ── SPLIT LAYOUT (slides 1 & 2) ── */
+    .split {
+      display: grid;
+      grid-template-columns: 53% 47%;
+      height: 100%;
+    }
+    .split-text {
+      padding: 84px 64px 84px 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+    .split-text .mid {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 8px;
+      gap: 30px;
+    }
+    .split-img {
+      position: relative;
+      overflow: hidden;
+    }
+    .split-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    /* Left fade so text stays readable */
+    .dark .split-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, #0F0F0F 0%, rgba(15,15,15,0.4) 40%, transparent 70%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .light .split-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, #F7F4ED 0%, rgba(247,244,237,0.3) 35%, transparent 65%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    /* Fallback when image fails */
+    .split-img.no-img { background: #0a0a0a; }
+    .light .split-img.no-img { background: #E8E2D4; }
+
+    /* ── SINGLE COL LAYOUT (slides 3 & 4) ── */
     .si {
       width: 100%;
       height: 100%;
@@ -107,119 +189,83 @@
       justify-content: space-between;
     }
 
-    .counter {
-      font-size: 20px;
-      font-weight: 400;
-      color: #252525;
-      letter-spacing: 0.12em;
-    }
-    .counter b { color: #F2C230; font-weight: 400; }
-
-    /* Content area fills the middle */
-    .mid {
+    /* ── SLIDE 3: TOOL BLOCKS ── */
+    .mid-s3 {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
-      padding-bottom: 12px;
-      gap: 34px;
+      justify-content: center;
+      gap: 36px;
     }
-
-    .bar {
-      width: 52px;
-      height: 5px;
-      background: #F2C230;
-      border-radius: 2px;
-    }
-
-    h1 {
-      font-size: 90px;
-      font-weight: 800;
-      color: #FFFFFF;
-      line-height: 1.0;
-      letter-spacing: -0.025em;
-    }
-
-    .body {
-      font-size: 33px;
-      font-weight: 400;
-      color: #6a6a6a;
-      line-height: 1.65;
-      max-width: 840px;
-    }
-
-    .brand {
-      font-size: 18px;
-      font-weight: 400;
-      color: #1c1c1c;
-      letter-spacing: 0.07em;
-    }
-
-    /* ── SLIDE 3: TOOL BLOCKS ── */
-    .tools {
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
-    }
+    .tools { display: flex; flex-direction: column; gap: 44px; }
     .tool {
       padding-left: 32px;
       border-left: 4px solid #F2C230;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+    }
+    .tool-header { display: flex; align-items: center; gap: 18px; }
+    .tool-logo {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      object-fit: contain;
+      flex-shrink: 0;
+      background: transparent;
     }
     .tname {
-      font-size: 42px;
-      font-weight: 800;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 44px;
+      font-weight: 400;
       color: #F2C230;
-      letter-spacing: -0.015em;
+      letter-spacing: -0.01em;
     }
     .tdesc {
+      font-family: 'Inter', sans-serif;
       font-size: 27px;
       font-weight: 400;
       color: #5a5a5a;
       line-height: 1.65;
-      max-width: 830px;
     }
 
-    /* ── SLIDE 4: CLOSING QUESTION ── */
+    /* ── SLIDE 4: CLOSING ── */
+    .mid-s4 {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 12px;
+      gap: 32px;
+    }
     .question {
+      font-family: 'Archivo Black', sans-serif;
+      font-weight: 400;
       font-size: 50px;
-      font-weight: 800;
-      color: #F2C230;
+      color: #B89000;
       line-height: 1.2;
       letter-spacing: -0.02em;
-      max-width: 830px;
     }
 
     /* ── DOTS ── */
-    .dots {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
+    .dots { display: flex; align-items: center; gap: 9px; }
     .dot {
-      height: 6px;
-      width: 6px;
+      height: 6px; width: 6px;
       border-radius: 3px;
       background: #222;
       cursor: pointer;
       transition: all 0.3s ease;
     }
-    .dot.active {
-      background: #F2C230;
-      width: 24px;
-    }
+    .dot.active { background: #F2C230; width: 24px; }
     .dot:hover:not(.active) { background: #444; }
 
-    /* ── EXPORT BTN ── */
+    /* ── BUTTONS ── */
     .export-btn {
       background: #F2C230;
       color: #0F0F0F;
       border: none;
       padding: 13px 34px;
       border-radius: 6px;
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 13px;
       font-weight: 800;
       letter-spacing: 0.05em;
@@ -230,20 +276,13 @@
     .export-btn:hover { opacity: 0.8; }
     .export-btn:disabled { opacity: 0.45; cursor: wait; }
 
-    .hint {
-      font-size: 11px;
-      color: #222;
-      letter-spacing: 0.06em;
-    }
-
-    /* ── ZIP BTN ── */
     .zip-btn {
       background: transparent;
       color: #F2C230;
       border: 1.5px solid #F2C230;
       padding: 13px 34px;
       border-radius: 6px;
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 13px;
       font-weight: 800;
       letter-spacing: 0.05em;
@@ -254,10 +293,8 @@
     .zip-btn:hover { background: #F2C230; color: #0F0F0F; }
     .zip-btn:disabled { opacity: 0.45; cursor: wait; }
 
-    /* ── PROGRESS BAR ── */
     .progress-wrap {
-      width: 280px;
-      height: 3px;
+      width: 280px; height: 3px;
       background: #1a1a1a;
       border-radius: 2px;
       overflow: hidden;
@@ -266,18 +303,13 @@
     }
     .progress-wrap.visible { opacity: 1; }
     .progress-fill {
-      height: 100%;
-      width: 0%;
+      height: 100%; width: 0%;
       background: #F2C230;
       border-radius: 2px;
       transition: width 0.3s ease;
     }
-    .zip-status {
-      font-size: 11px;
-      color: #444;
-      letter-spacing: 0.06em;
-      height: 14px;
-    }
+    .zip-status { font-size: 11px; color: #444; letter-spacing: 0.06em; height: 14px; }
+    .hint       { font-size: 11px; color: #222; letter-spacing: 0.06em; }
   </style>
 </head>
 <body>
@@ -290,45 +322,86 @@
   <div class="slide-clip">
     <div class="slide-scale">
 
-      <!-- ═══ SLIDE 1 ═══ -->
-      <div class="slide active" id="slide-1">
-        <div class="si">
-          <p class="counter"><b>01</b> / 04</p>
-          <div class="mid">
-            <div class="bar"></div>
-            <h1>Apple eliminó<br>la Mac Mini<br>más barata</h1>
-            <p class="body">Costaba $599, tenía chip M4 y era la Mac de escritorio más accesible. El 1 de mayo de 2026 desapareció del sitio sin ningún anuncio. Ahora la más barata cuesta $799.</p>
+      <!-- ═══ SLIDE 1: DARK · Mac Mini ═══ -->
+      <div class="slide dark active" id="slide-1">
+        <div class="split">
+          <div class="split-text">
+            <p class="counter"><b>01</b> / 04</p>
+            <div class="mid">
+              <div class="bar"></div>
+              <h1 style="font-size:88px;">Apple eliminó<br>la Mac Mini<br>más barata</h1>
+              <p class="body">Costaba $599, tenía chip M4 y era la Mac de escritorio más accesible. El 1 de mayo de 2026 desapareció del sitio sin ningún anuncio. Ahora la más barata cuesta $799.</p>
+            </div>
+            <p class="brand">@yinagrisalesm7</p>
           </div>
-          <p class="brand">@yinagrisalesm7</p>
+          <div class="split-img" id="s1-img">
+            <img
+              src="https://www.apple.com/newsroom/images/product/mac/standard/Apple-Mac-mini-hero-241028.jpg.landing-big_2x.jpg"
+              crossorigin="anonymous"
+              onerror="document.getElementById('s1-img').classList.add('no-img'); this.remove()"
+              alt="Mac Mini M4"
+              style="object-position: center center;"
+            >
+          </div>
         </div>
       </div>
 
-      <!-- ═══ SLIDE 2 ═══ -->
-      <div class="slide" id="slide-2">
-        <div class="si">
-          <p class="counter"><b>02</b> / 04</p>
-          <div class="mid">
-            <div class="bar"></div>
-            <h1>Se agotó porque<br>todo el mundo<br>la quería para IA</h1>
-            <p class="body">La gente la compró masivamente para correr inteligencia artificial desde casa. Tim Cook lo admitió: "la adoptaron mucho más rápido de lo que predijimos".</p>
+      <!-- ═══ SLIDE 2: LIGHT · Tim Cook ═══ -->
+      <div class="slide light" id="slide-2">
+        <div class="split">
+          <div class="split-text">
+            <p class="counter"><b>02</b> / 04</p>
+            <div class="mid">
+              <div class="bar"></div>
+              <h1 style="font-size:80px;">Se agotó porque<br>todo el mundo<br>la quería para IA</h1>
+              <p class="body">La gente la compró masivamente para correr inteligencia artificial desde casa. Tim Cook lo admitió: "la adoptaron mucho más rápido de lo que predijimos".</p>
+            </div>
+            <p class="brand">@yinagrisalesm7</p>
           </div>
-          <p class="brand">@yinagrisalesm7</p>
+          <div class="split-img" id="s2-img">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Tim_Cook_2009_cropped.jpg/440px-Tim_Cook_2009_cropped.jpg"
+              crossorigin="anonymous"
+              onerror="document.getElementById('s2-img').classList.add('no-img'); this.remove()"
+              alt="Tim Cook"
+              style="object-position: center top;"
+            >
+          </div>
         </div>
       </div>
 
-      <!-- ═══ SLIDE 3 ═══ -->
-      <div class="slide" id="slide-3">
+      <!-- ═══ SLIDE 3: DARK · Tools ═══ -->
+      <div class="slide dark" id="slide-3">
         <div class="si">
           <p class="counter"><b>03</b> / 04</p>
-          <div class="mid" style="justify-content: center; gap: 40px; padding-bottom: 0;">
-            <h1 style="font-size: 68px;">Para esto<br>la están usando</h1>
+          <div class="mid-s3">
+            <h1 style="font-size:70px;">Para esto<br>la están usando</h1>
             <div class="tools">
               <div class="tool">
-                <p class="tname">OpenClaw</p>
+                <div class="tool-header">
+                  <img
+                    src="https://unpkg.com/@lobehub/icons-static-png@latest/light/openclaw.png"
+                    class="tool-logo"
+                    crossorigin="anonymous"
+                    onerror="this.remove()"
+                    alt="OpenClaw"
+                  >
+                  <p class="tname">OpenClaw</p>
+                </div>
                 <p class="tdesc">Un asistente de IA que vive en tu Mac y actúa por ti. Revisa correos, organiza archivos, responde mensajes de WhatsApp o Telegram. Necesita una Mac encendida todo el tiempo. La Mini es perfecta: pequeña, silenciosa, consume poca energía.</p>
               </div>
               <div class="tool">
-                <p class="tname">Claude Cowork</p>
+                <div class="tool-header">
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Claude_AI_logo.svg"
+                    class="tool-logo"
+                    crossorigin="anonymous"
+                    onerror="this.remove()"
+                    alt="Claude"
+                    style="background:#fff; border-radius:14px; padding:4px;"
+                  >
+                  <p class="tname">Claude Cowork</p>
+                </div>
                 <p class="tdesc">Una función de la app de Claude que accede a tus archivos reales. Le describes una tarea y la ejecuta sola: organiza carpetas, redacta reportes, procesa documentos. No te da instrucciones, hace el trabajo.</p>
               </div>
             </div>
@@ -337,13 +410,13 @@
         </div>
       </div>
 
-      <!-- ═══ SLIDE 4 ═══ -->
-      <div class="slide" id="slide-4">
+      <!-- ═══ SLIDE 4: LIGHT · Closing ═══ -->
+      <div class="slide light" id="slide-4">
         <div class="si">
           <p class="counter"><b>04</b> / 04</p>
-          <div class="mid">
+          <div class="mid-s4">
             <div class="bar"></div>
-            <h1>La IA ya cambió<br>el precio de<br>la tecnología</h1>
+            <h1 style="font-size:86px;">La IA ya cambió<br>el precio de<br>la tecnología</h1>
             <p class="body">Primero subió el precio de la RAM globalmente porque la industria de IA la consume sin parar. Ahora empieza a desaparecer el hardware más accesible.</p>
             <p class="question">¿Qué será lo próximo en subir de precio o desaparecer?</p>
           </div>
@@ -365,7 +438,7 @@
 </div>
 
 <button class="export-btn" id="exportBtn" onclick="exportSlide()">Exportar slide actual</button>
-<button class="zip-btn" id="zipBtn" onclick="exportAllZip()">Exportar todos &mdash; ZIP</button>
+<button class="zip-btn"    id="zipBtn"    onclick="exportAllZip()">Exportar todos &mdash; ZIP</button>
 <div class="progress-wrap" id="progressWrap"><div class="progress-fill" id="progressFill"></div></div>
 <p class="zip-status" id="zipStatus"></p>
 <p class="hint">PNG exportado a 1080 &times; 1080 px</p>
@@ -391,7 +464,7 @@
 
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') navigate(1);
-    if (e.key === 'ArrowLeft') navigate(-1);
+    if (e.key === 'ArrowLeft')  navigate(-1);
   });
 
   async function captureSlide(index) {
@@ -399,13 +472,14 @@
     const shell = document.createElement('div');
     shell.style.cssText = 'position:fixed;top:-5000px;left:-5000px;width:1080px;height:1080px;overflow:hidden;';
     const clone = src.cloneNode(true);
-    clone.style.cssText = 'position:relative;width:1080px;height:1080px;display:flex;flex-direction:column;opacity:1;pointer-events:none;background:#0F0F0F;transition:none;';
+    clone.style.cssText = 'position:relative;width:1080px;height:1080px;opacity:1;pointer-events:none;transition:none;overflow:hidden;';
     shell.appendChild(clone);
     document.body.appendChild(shell);
     try {
       return await html2canvas(clone, {
         width: 1080, height: 1080, scale: 1,
-        useCORS: true, backgroundColor: '#0F0F0F', logging: false
+        useCORS: true, allowTaint: false,
+        backgroundColor: null, logging: false
       });
     } finally {
       document.body.removeChild(shell);
@@ -432,11 +506,11 @@
   }
 
   async function exportAllZip() {
-    const zipBtn  = document.getElementById('zipBtn');
-    const expBtn  = document.getElementById('exportBtn');
-    const wrap    = document.getElementById('progressWrap');
-    const fill    = document.getElementById('progressFill');
-    const status  = document.getElementById('zipStatus');
+    const zipBtn = document.getElementById('zipBtn');
+    const expBtn = document.getElementById('exportBtn');
+    const wrap   = document.getElementById('progressWrap');
+    const fill   = document.getElementById('progressFill');
+    const status = document.getElementById('zipStatus');
 
     zipBtn.disabled = true;
     expBtn.disabled = true;
@@ -444,35 +518,28 @@
 
     try {
       const zip = new JSZip();
-
       for (let i = 1; i <= TOTAL; i++) {
         status.textContent = `Procesando slide ${i} de ${TOTAL}...`;
         fill.style.width = `${((i - 1) / TOTAL) * 100}%`;
-
         const canvas = await captureSlide(i);
         const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
         zip.file(`mac-mini-slide-0${i}.png`, blob);
       }
-
       status.textContent = 'Generando ZIP...';
       fill.style.width = '95%';
-
       const zipBlob = await zip.generateAsync({ type: 'blob' });
       const a = document.createElement('a');
       a.download = 'mac-mini-carrusel.zip';
       a.href = URL.createObjectURL(zipBlob);
       a.click();
       URL.revokeObjectURL(a.href);
-
       fill.style.width = '100%';
       status.textContent = 'Listo. Archivo: mac-mini-carrusel.zip';
-
       setTimeout(() => {
         fill.style.width = '0%';
         wrap.classList.remove('visible');
         status.textContent = '';
       }, 3500);
-
     } catch (err) {
       console.error(err);
       status.textContent = 'Error al generar el ZIP.';

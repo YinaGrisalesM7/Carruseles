@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tech News Carousel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@100;400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', system-ui, sans-serif;
+      padding: 40px 20px;
+      gap: 20px;
+    }
+
+    .header {
+      font-size: 11px;
+      color: #2a2a2a;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    /* ── NAV ── */
+    .nav-row { display: flex; align-items: center; gap: 16px; }
+    .nav-btn {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: 1.5px solid #222;
+      background: transparent;
+      color: #555; font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .nav-btn:hover:not(:disabled) { background: #F2C230; border-color: #F2C230; color: #0F0F0F; }
+    .nav-btn:disabled { opacity: 0.18; cursor: default; }
+
+    /* ── CLIP: 540×675 (0.5 scale de 1080×1350) ── */
+    .slide-clip {
+      width: 540px;
+      height: 675px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.8);
+    }
+    .slide-scale {
+      position: absolute;
+      width: 1080px;
+      height: 1350px;
+      transform: scale(0.5);
+      transform-origin: top left;
+    }
+
+    /* ── SLIDE BASE ── */
+    .slide {
+      position: absolute; top: 0; left: 0;
+      width: 1080px; height: 1350px;
+      overflow: hidden;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s ease;
+    }
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    /* ── DARK THEME ── */
+    .dark { background: #0F0F0F; }
+    .dark .headline { color: #FFFFFF; }
+    .dark .body-text { color: #555; }
+    .dark .rule { background: #1e1e1e; }
+    .dark .swipe { color: #2a2a2a; }
+    .dark .brand { color: #1e1e1e; }
+
+    /* ── LIGHT THEME ── */
+    .light { background: #F9F7F2; }
+    .light .headline { color: #0F0F0F; }
+    .light .body-text { color: #888; }
+    .light .rule { background: #E0DDD5; }
+    .light .swipe { color: #C8C4BB; }
+    .light .brand { color: #D0CCC3; }
+
+    /* ── SLIDE INNER ── */
+    .si {
+      width: 100%; height: 100%;
+      padding: 100px 96px 88px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* ── TOP BLOCK ── */
+    .top {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .label {
+      display: inline-flex;
+      align-items: center;
+      background: #F2C230;
+      color: #0F0F0F;
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 400;
+      padding: 8px 24px;
+      border-radius: 40px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+
+    .headline {
+      font-family: 'Archivo Black', sans-serif;
+      font-weight: 400;
+      font-size: 100px;
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+    }
+
+    /* ── RULE ── */
+    .rule {
+      width: 72px;
+      height: 4px;
+      border-radius: 2px;
+    }
+
+    /* ── BOTTOM BLOCK ── */
+    .bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+    }
+
+    .body-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 100;
+      font-size: 36px;
+      line-height: 1.7;
+    }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+    }
+
+    .swipe {
+      font-family: 'Inter', sans-serif;
+      font-size: 24px;
+      font-weight: 100;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── DOTS ── */
+    .dots { display: flex; align-items: center; gap: 9px; }
+    .dot {
+      height: 6px; width: 6px; border-radius: 3px;
+      background: #222; cursor: pointer; transition: all 0.3s;
+    }
+    .dot.active { background: #F2C230; width: 24px; }
+    .dot:hover:not(.active) { background: #444; }
+
+    /* ── BUTTONS ── */
+    .export-btn {
+      background: #F2C230; color: #0F0F0F; border: none;
+      padding: 12px 30px; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 12px;
+      font-weight: 800; letter-spacing: 0.05em;
+      text-transform: uppercase; cursor: pointer; transition: opacity 0.2s;
+    }
+    .export-btn:hover { opacity: 0.8; }
+    .export-btn:disabled { opacity: 0.45; cursor: wait; }
+
+    .zip-btn {
+      background: transparent; color: #F2C230;
+      border: 1.5px solid #F2C230;
+      padding: 12px 30px; border-radius: 6px;
+      font-family: 'Inter', sans-serif; font-size: 12px;
+      font-weight: 800; letter-spacing: 0.05em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .zip-btn:hover { background: #F2C230; color: #0F0F0F; }
+    .zip-btn:disabled { opacity: 0.45; cursor: wait; }
+
+    .progress-wrap {
+      width: 260px; height: 3px; background: #1a1a1a;
+      border-radius: 2px; overflow: hidden; opacity: 0; transition: opacity 0.2s;
+    }
+    .progress-wrap.visible { opacity: 1; }
+    .progress-fill {
+      height: 100%; width: 0%; background: #F2C230;
+      border-radius: 2px; transition: width 0.3s ease;
+    }
+    .zip-status { font-size: 11px; color: #444; letter-spacing: 0.06em; height: 14px; }
+    .hint       { font-size: 11px; color: #222; letter-spacing: 0.06em; }
+  </style>
+</head>
+<body>
+
+<p class="header">Tech News &middot; Instagram Portrait &middot; 1080&times;1350</p>
+
+<div class="nav-row">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">&#8592;</button>
+
+  <div class="slide-clip">
+    <div class="slide-scale">
+
+      <!-- ═══ SLIDE 1: DARK · Apple ═══ -->
+      <div class="slide dark active" id="slide-1">
+        <div class="si">
+          <div class="top">
+            <span class="label">Apple</span>
+            <h1 class="headline">¿El primer iPhone plegable llegaría en septiembre?</h1>
+          </div>
+          <div class="rule"></div>
+          <div class="bottom">
+            <p class="body-text">Son rumores, nada confirmado. Pero los filtradores apuntan a que Apple presentaría su primer iPhone con pantalla plegable junto al iPhone 18. Se pliega como clamshell, precio estimado desde $2,000 y promete llegar sin arrugas visibles en pantalla.</p>
+            <div class="footer">
+              <span class="brand">@yinagrisalesm7</span>
+              <span class="swipe">desliza &rarr;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SLIDE 2: LIGHT · OpenAI ═══ -->
+      <div class="slide light" id="slide-2">
+        <div class="si">
+          <div class="top">
+            <span class="label">OpenAI</span>
+            <h1 class="headline">OpenAI se alió con OpenClaw y Anthropic los bloqueó</h1>
+          </div>
+          <div class="rule"></div>
+          <div class="bottom">
+            <p class="body-text">OpenClaw es el agente de IA más descargado en la historia de GitHub. OpenAI abrió su suscripción de ChatGPT para usarlo por $23 al mes. Anthropic, en cambio, bloqueó el acceso de Claude a la plataforma para proteger sus ingresos.</p>
+            <div class="footer">
+              <span class="brand">@yinagrisalesm7</span>
+              <span class="swipe">desliza &rarr;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SLIDE 3: DARK · Hardware ═══ -->
+      <div class="slide dark" id="slide-3">
+        <div class="si">
+          <div class="top">
+            <span class="label">Hardware</span>
+            <h1 class="headline">La Mac Mini base desapareció. La IA tendría algo que ver</h1>
+          </div>
+          <div class="rule"></div>
+          <div class="bottom">
+            <p class="body-text">Apple retiró en silencio el modelo de $599. La demanda creció más de lo esperado, en parte porque mucha gente la compró para correr IA desde casa. También hay escasez global de chips de memoria. Apple no explicó nada oficialmente. Ahora el más barato cuesta $799.</p>
+            <div class="footer">
+              <span class="brand">@yinagrisalesm7</span>
+              <span class="swipe">desliza &rarr;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SLIDE 4: LIGHT · Gaming ═══ -->
+      <div class="slide light" id="slide-4">
+        <div class="si">
+          <div class="top">
+            <span class="label">Gaming</span>
+            <h1 class="headline">Final Fantasy VII Rebirth llega a Switch 2 en junio</h1>
+          </div>
+          <div class="rule"></div>
+          <div class="bottom">
+            <p class="body-text">Square Enix confirmó la fecha: 3 de junio de 2026. Ya hay demo gratuita disponible en la eShop. La Switch 2 sigue sumando ports de grandes títulos y ya vendió más de 17 millones de unidades desde su lanzamiento en 2025.</p>
+            <div class="footer">
+              <span class="brand">@yinagrisalesm7</span>
+              <span class="swipe"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">&#8594;</button>
+</div>
+
+<div class="dots">
+  <div class="dot active" onclick="goTo(0)"></div>
+  <div class="dot" onclick="goTo(1)"></div>
+  <div class="dot" onclick="goTo(2)"></div>
+  <div class="dot" onclick="goTo(3)"></div>
+</div>
+
+<button class="export-btn" id="exportBtn" onclick="exportSlide()">Exportar slide actual</button>
+<button class="zip-btn"    id="zipBtn"    onclick="exportAllZip()">Exportar todos &mdash; ZIP</button>
+<div class="progress-wrap" id="progressWrap"><div class="progress-fill" id="progressFill"></div></div>
+<p class="zip-status" id="zipStatus"></p>
+<p class="hint">PNG exportado a 1080 &times; 1350 px</p>
+
+<script>
+  let current = 0;
+  const TOTAL = 4;
+
+  function navigate(d) { goTo(current + d); }
+
+  function goTo(i) {
+    if (i < 0 || i >= TOTAL) return;
+    document.getElementById(`slide-${current + 1}`).classList.remove('active');
+    document.querySelectorAll('.dot')[current].classList.remove('active');
+    current = i;
+    document.getElementById(`slide-${current + 1}`).classList.add('active');
+    document.querySelectorAll('.dot')[current].classList.add('active');
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === TOTAL - 1;
+  }
+
+  document.getElementById('prevBtn').disabled = true;
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') navigate(1);
+    if (e.key === 'ArrowLeft')  navigate(-1);
+  });
+
+  async function captureSlide(index) {
+    const src = document.getElementById(`slide-${index}`);
+    const shell = document.createElement('div');
+    shell.style.cssText = 'position:fixed;top:-5000px;left:-5000px;width:1080px;height:1350px;overflow:hidden;';
+    const clone = src.cloneNode(true);
+    clone.style.cssText = 'position:relative;width:1080px;height:1350px;opacity:1;pointer-events:none;transition:none;overflow:hidden;';
+    shell.appendChild(clone);
+    document.body.appendChild(shell);
+    try {
+      return await html2canvas(clone, {
+        width: 1080, height: 1350, scale: 1,
+        useCORS: true, allowTaint: true,
+        backgroundColor: null, logging: false
+      });
+    } finally {
+      document.body.removeChild(shell);
+    }
+  }
+
+  async function exportSlide() {
+    const btn = document.getElementById('exportBtn');
+    btn.disabled = true; btn.textContent = 'Exportando...';
+    try {
+      const canvas = await captureSlide(current + 1);
+      const a = document.createElement('a');
+      a.download = `tech-news-slide-${current + 1}.png`;
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    } catch (err) {
+      console.error(err);
+      alert('Error al exportar.');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Exportar slide actual';
+    }
+  }
+
+  async function exportAllZip() {
+    const zipBtn = document.getElementById('zipBtn');
+    const expBtn = document.getElementById('exportBtn');
+    const wrap   = document.getElementById('progressWrap');
+    const fill   = document.getElementById('progressFill');
+    const status = document.getElementById('zipStatus');
+    zipBtn.disabled = true; expBtn.disabled = true;
+    wrap.classList.add('visible');
+    try {
+      const zip = new JSZip();
+      for (let i = 1; i <= TOTAL; i++) {
+        status.textContent = `Procesando slide ${i} de ${TOTAL}...`;
+        fill.style.width = `${((i - 1) / TOTAL) * 100}%`;
+        const canvas = await captureSlide(i);
+        const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+        zip.file(`tech-news-slide-0${i}.png`, blob);
+      }
+      status.textContent = 'Generando ZIP...';
+      fill.style.width = '95%';
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.download = 'tech-news-carrusel.zip';
+      a.href = URL.createObjectURL(zipBlob);
+      a.click();
+      URL.revokeObjectURL(a.href);
+      fill.style.width = '100%';
+      status.textContent = 'Listo. Archivo: tech-news-carrusel.zip';
+      setTimeout(() => {
+        fill.style.width = '0%';
+        wrap.classList.remove('visible');
+        status.textContent = '';
+      }, 3500);
+    } catch (err) {
+      console.error(err);
+      status.textContent = 'Error al generar el ZIP.';
+      wrap.classList.remove('visible');
+    } finally {
+      zipBtn.disabled = false; expBtn.disabled = false;
+    }
+  }
+</script>
+
+</body>
+</html>

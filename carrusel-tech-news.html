@@ -43,7 +43,7 @@
       display: flex; align-items: center; justify-content: center;
       transition: all 0.2s; flex-shrink: 0;
     }
-    .nav-btn:hover:not(:disabled) { background: #F2C230; border-color: #F2C230; color: #0F0F0F; }
+    .nav-btn:hover:not(:disabled) { background: #8B5CF6; border-color: #8B5CF6; color: #FFFFFF; }
     .nav-btn:disabled { opacity: 0.18; cursor: default; }
 
     /* ── CLIP: 540×675 (0.5 scale de 1080×1350) ── */
@@ -76,7 +76,7 @@
     .dark { background: #0F0F0F; }
     .dark .headline { color: #FFFFFF; }
     .dark .body-text { color: #555; }
-    .dark .rule { background: #1e1e1e; }
+    .dark .rule { background: #8B5CF6; }
     .dark .swipe { color: #2a2a2a; }
     .dark .brand { color: #1e1e1e; }
 
@@ -84,7 +84,7 @@
     .light { background: #F9F7F2; }
     .light .headline { color: #0F0F0F; }
     .light .body-text { color: #888; }
-    .light .rule { background: #E0DDD5; }
+    .light .rule { background: #8B5CF6; }
     .light .swipe { color: #C8C4BB; }
     .light .brand { color: #D0CCC3; }
 
@@ -107,8 +107,8 @@
     .label {
       display: inline-flex;
       align-items: center;
-      background: #F2C230;
-      color: #0F0F0F;
+      background: #8B5CF6;
+      color: #FFFFFF;
       font-family: 'Inter', sans-serif;
       font-size: 22px;
       font-weight: 400;
@@ -174,12 +174,12 @@
       height: 6px; width: 6px; border-radius: 3px;
       background: #222; cursor: pointer; transition: all 0.3s;
     }
-    .dot.active { background: #F2C230; width: 24px; }
+    .dot.active { background: #8B5CF6; width: 24px; }
     .dot:hover:not(.active) { background: #444; }
 
     /* ── BUTTONS ── */
     .export-btn {
-      background: #F2C230; color: #0F0F0F; border: none;
+      background: #8B5CF6; color: #FFFFFF; border: none;
       padding: 12px 30px; border-radius: 6px;
       font-family: 'Inter', sans-serif; font-size: 12px;
       font-weight: 800; letter-spacing: 0.05em;
@@ -189,14 +189,14 @@
     .export-btn:disabled { opacity: 0.45; cursor: wait; }
 
     .zip-btn {
-      background: transparent; color: #F2C230;
-      border: 1.5px solid #F2C230;
+      background: transparent; color: #8B5CF6;
+      border: 1.5px solid #8B5CF6;
       padding: 12px 30px; border-radius: 6px;
       font-family: 'Inter', sans-serif; font-size: 12px;
       font-weight: 800; letter-spacing: 0.05em;
       text-transform: uppercase; cursor: pointer; transition: all 0.2s;
     }
-    .zip-btn:hover { background: #F2C230; color: #0F0F0F; }
+    .zip-btn:hover { background: #8B5CF6; color: #FFFFFF; }
     .zip-btn:disabled { opacity: 0.45; cursor: wait; }
 
     .progress-wrap {
@@ -205,11 +205,20 @@
     }
     .progress-wrap.visible { opacity: 1; }
     .progress-fill {
-      height: 100%; width: 0%; background: #F2C230;
+      height: 100%; width: 0%; background: #8B5CF6;
       border-radius: 2px; transition: width 0.3s ease;
     }
     .zip-status { font-size: 11px; color: #444; letter-spacing: 0.06em; height: 14px; }
     .hint       { font-size: 11px; color: #222; letter-spacing: 0.06em; }
+
+    .source {
+      font-family: 'Inter', sans-serif;
+      font-weight: 100;
+      font-size: 24px;
+      letter-spacing: 0.06em;
+    }
+    .dark .source { color: #333; }
+    .light .source { color: #BBBBBB; }
   </style>
 </head>
 <body>
@@ -232,6 +241,7 @@
           <div class="rule"></div>
           <div class="bottom">
             <p class="body-text">Son rumores, nada confirmado. Pero los filtradores apuntan a que Apple presentaría su primer iPhone con pantalla plegable junto al iPhone 18. Se pliega como clamshell, precio estimado desde $2,000 y promete llegar sin arrugas visibles en pantalla.</p>
+            <p class="source">Fuente: Applesfera</p>
             <div class="footer">
               <span class="brand">@yinagrisalesm7</span>
               <span class="swipe">desliza &rarr;</span>
